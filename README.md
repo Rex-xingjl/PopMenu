@@ -3,7 +3,7 @@ A menu to show selections
 
 简单介绍 后续有时间再具体markdown
 
-通过 1.view 2.BarButtonItem(use customView) 呼出菜单 
+通过 1.view（含button之类） 2.BarButtonItem(use customView) 呼出菜单 
 
 自动计算显示的位置、显示宽度、三角的位置
 
