@@ -18,7 +18,6 @@
 
 - (instancetype)initWithFrame:(CGRect)frame Color:(UIColor *)backColor; {
     if (self = [super initWithFrame:frame]) {
-        [self drawRect:frame];
         self.opaque = NO;
         self.backColor = backColor;
     }
