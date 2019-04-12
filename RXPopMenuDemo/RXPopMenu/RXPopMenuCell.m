@@ -10,10 +10,28 @@
 
 @implementation RXPopMenuCell
 
+- (void)setBackColor:(UIColor *)backColor {
+    _backColor = backColor;
+    
+    self.backgroundColor = backColor;
+}
+
 - (void)awakeFromNib {
     [super awakeFromNib];
     _leftImageView.userInteractionEnabled = NO;
     _rightLabel.userInteractionEnabled = NO;
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    [super setHighlighted:highlighted animated:animated];
+    // 动画高亮变色效果
+    [UIView animateWithDuration:0.2 animations:^{
+        if (highlighted) {
+            self.contentView.backgroundColor = [UIColor blackColor];
+        } else {
+            self.contentView.backgroundColor = self.backColor;
+        }
+    }];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

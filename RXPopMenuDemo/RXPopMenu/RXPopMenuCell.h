@@ -16,5 +16,6 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *imageViewWidth;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *spaceOfImageAndLabel;
 
+@property (nonatomic, strong) UIColor * backColor;
 
 @end

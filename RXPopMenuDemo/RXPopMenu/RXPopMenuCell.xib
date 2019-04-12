@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14109" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14088"/>
-        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14460.20"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -19,8 +18,8 @@
                 <rect key="frame" x="0.0" y="0.0" width="203" height="47.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Lt-ak-14Z">
-                        <rect key="frame" x="15" y="13.5" width="22" height="22"/>
+                    <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3Lt-ak-14Z">
+                        <rect key="frame" x="15" y="13" width="22" height="22"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="22" id="8Cy-9W-Anh"/>
                             <constraint firstAttribute="width" secondItem="3Lt-ak-14Z" secondAttribute="height" multiplier="1:1" id="J3G-LU-t95"/>
@@ -33,6 +32,7 @@
                         <color key="highlightedColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </label>
                 </subviews>
+                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 <constraints>
                     <constraint firstItem="3Lt-ak-14Z" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="2a2-aJ-3ha"/>
                     <constraint firstItem="SgO-Hb-Gt1" firstAttribute="leading" secondItem="3Lt-ak-14Z" secondAttribute="trailing" constant="8" id="2aM-dV-GRN"/>

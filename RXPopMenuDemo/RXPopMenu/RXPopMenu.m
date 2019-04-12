@@ -16,7 +16,7 @@
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 
 @interface RXPopMenu ()
-<UITableViewDelegate, UITableViewDataSource, UIPopoverPresentationControllerDelegate>
+<UITableViewDelegate, UITableViewDataSource>
 
 @property (nonatomic, strong) UITableView *popTableView;
 @property (nonatomic, strong) RXPopMenuArrow * popArrow;
@@ -40,10 +40,32 @@
 #pragma mark - View Life Cycle -
 
 + (id)menu {
-    RXPopMenu * menu = [[RXPopMenu alloc] init];
-    menu.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    menu.view.alpha = 0.8f;
+    RXPopMenu * menu = [[RXPopMenu alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    menu.alpha = 0.95f;
+    menu.backgroundColor = [UIColor clearColor];
     return menu;
+}
+
++ (void)hideBy:(id)target {
+    UIViewController * showVC;
+    UIView * containerView;
+    if ([target isKindOfClass:[UIView class]]) {
+        showVC = [RXPopMenu VCForShowView:target];
+    } else {
+        showVC = target;
+    }
+    if (showVC.navigationController) {
+        containerView = showVC.navigationController.view;
+    } else {
+        containerView = showVC.view;
+    }
+    [containerView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        if ([obj isKindOfClass:[self class]]) {
+            [obj removeFromSuperview];
+            obj = nil;
+            *stop = YES;
+        }
+    }];
 }
 
 - (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items {
@@ -56,10 +78,13 @@
         self.inNaviBar = YES; // 在navigationBar上面
     }
     self.items = items;
-    [[self showViewVC] presentViewController:self animated:NO completion:nil];
+    UIViewController * showVC = [RXPopMenu VCForShowView:self.showView];
+    if (showVC.navigationController) {
+        [showVC.navigationController.view addSubview:self];
+    } else {
+        [showVC.view addSubview:self];
+    }
 }
-
-#pragma mark - Get / Set -
 
 - (void)setItems:(NSArray<RXPopMenuItem *> *)items {
     if (_items != items) {
@@ -85,6 +110,7 @@
 
 - (CGFloat)widthOfMenu {
     CGFloat MINWIDTH = self.hideImage ? 70.f : 100.f;
+
     RXPopMenuItem * maxItem;
     for (RXPopMenuItem * item in _items) {
         if (maxItem.title.length < item.title.length) {
@@ -117,7 +143,7 @@
 }
 
 - (UIColor *)backColor {
-    return _backColor ? : [UIColor blackColor];
+    return _backColor ? : RXHexRGB(0x222222);
 }
 
 - (void)setBackColor:(UIColor *)backColor {
@@ -133,7 +159,7 @@
 - (void)setCornerRadius:(CGFloat)cornerRadius {
     if (_cornerRadius != cornerRadius) {
         _cornerRadius = cornerRadius;
-        self.view.superview.layer.cornerRadius = self.cornerRadius;
+        self.popView.superview.layer.cornerRadius = self.cornerRadius;
     }
 }
 
@@ -171,7 +197,7 @@
         _popTableView.dataSource = self;
         _popTableView.separatorColor = self.lineColor;
         _popTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
-        _popTableView.backgroundColor = [UIColor clearColor];
+        _popTableView.backgroundColor = self.backColor;
         _popTableView.clipsToBounds = YES;
         _popTableView.tableFooterView = [[UIView alloc] init];
         [_popTableView registerNib:[UINib nibWithNibName:RXPopMenuCellID bundle:[NSBundle mainBundle]]
@@ -189,7 +215,7 @@
         _popView.backgroundColor = self.backColor;
         [_popArrow addSubview:self.popArrow];
         [_popView addSubview:self.popTableView];
-        [self.view addSubview:_popView];
+        [self addSubview:_popView];
     }
     return _popView;
 }
@@ -198,7 +224,7 @@
     if (!_popArrow) {
         CGRect frame = [self getArrowFrame];
         self.popArrow = [[RXPopMenuArrow alloc] initWithFrame:frame Color:self.backColor];
-        [self.view addSubview:_popArrow];
+        [self addSubview:_popArrow];
     }
     return _popArrow;
 }
@@ -206,7 +232,7 @@
 - (CGRect)getShowViewFrame {
     CGRect viewScreenFrame;
     if (self.inNaviBar) {
-        viewScreenFrame = [self.showView convertRect:[self.showView bounds] toView:self.navigationController.view];;
+        viewScreenFrame = [self.showView convertRect:[self.showView bounds] toView:[RXPopMenu VCForShowView:self.showView].navigationController.view];;
     }  else {
         UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
         viewScreenFrame = [self.showView convertRect: [self.showView bounds] toView:window];
@@ -255,15 +281,16 @@
     }
 }
 
-- (UIViewController *)showViewVC {
-    if ([self.showView isKindOfClass:[UIView class]]) {
-        for (UIView * next = [self.showView superview]; next; next = next.superview) {
++ (UIViewController *)VCForShowView:(id)view {
+
+    if ([view isKindOfClass:[UIView class]]) {
+        for (UIView * next = [view superview]; next; next = next.superview) {
             UIResponder* nextResponder = [next nextResponder];
             if ([nextResponder isKindOfClass:[UIViewController class]]) {
                 return (UIViewController *)nextResponder;
             }
         }
-    } else if ([self.showView isKindOfClass:[UIBarButtonItem class]]) {
+    } else if ([view isKindOfClass:[UIBarButtonItem class]]) {
         UIWindow * window = [[UIApplication sharedApplication] keyWindow];
         if (window.windowLevel != UIWindowLevelNormal) {
             NSArray *windows = [[UIApplication sharedApplication] windows];
@@ -302,6 +329,7 @@
     cell.leftImageView.image = [UIImage imageNamed:item.image];
     cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
     cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
+    cell.backColor = self.backColor;
     CGFloat left = indexPath.row+1 == self.items.count ? self.menuSize.width : 11;
     cell.separatorInset = UIEdgeInsetsMake(0, left, 0, left);
     return cell;
@@ -314,16 +342,12 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.itemActions) {
         self.itemActions(self.items[indexPath.row]);
-        [UIView performWithoutAnimation:^{
-            [self dismissViewControllerAnimated:NO completion:nil];
-        }];
+        [self removeFromSuperview];
     }
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [UIView performWithoutAnimation:^{
-        [self dismissViewControllerAnimated:NO completion:nil];
-    }];
+    [self removeFromSuperview];
 }
 
 @end

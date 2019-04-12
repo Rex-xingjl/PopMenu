@@ -33,12 +33,15 @@
 #import <UIKit/UIKit.h>
 @class RXPopMenuItem;
 
-@interface RXPopMenu : UIViewController
+@interface RXPopMenu : UIView
 
 #pragma mark - ShowMenu
 
 /** 创建弹出框 */
 + (id)menu;
+
+/** 隐藏弹出框 */
++ (void)hideBy:(id)target;
 
 /** 展示弹出框
  * target: 弹出框指向控件 可以是view或者UIBarButtonItem

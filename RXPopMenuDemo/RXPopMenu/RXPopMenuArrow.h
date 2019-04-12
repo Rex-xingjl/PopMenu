@@ -12,5 +12,4 @@
 
 - (instancetype)initWithFrame:(CGRect)frame Color:(UIColor *)backColor;
 
-
 @end
