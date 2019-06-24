@@ -208,7 +208,10 @@
 
 - (UIView *)popView {
     if (!_popView) {
+        CGRect arrow = [self getArrowFrame];
         CGRect frame = [self getPopFrame];
+        frame.origin.x = (arrow.origin.x + arrow.size.width/2.0) - frame.size.width/2.0;
+        
         self.popView = [[UIView alloc] initWithFrame:frame];
         _popView.layer.cornerRadius = self.cornerRadius;
         _popView.layer.masksToBounds = YES;
@@ -222,9 +225,14 @@
 
 - (RXPopMenuArrow *)popArrow {
     if (!_popArrow) {
+        CGRect viewScreenFrame = [self getShowViewFrame];
         CGRect frame = [self getArrowFrame];
         self.popArrow = [[RXPopMenuArrow alloc] initWithFrame:frame Color:self.backColor];
         [self addSubview:_popArrow];
+        if (frame.origin.y <= viewScreenFrame.origin.y) {
+            CGAffineTransform transform = CGAffineTransformIdentity;
+            _popArrow.transform = CGAffineTransformRotate(transform, M_PI);
+        }
     }
     return _popArrow;
 }
@@ -276,7 +284,11 @@
     CGRect arrowFrame = CGRectMake(0, 0, 13, 13/2);
     CGFloat verticalSpac = 10;
     arrowFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width/2 - arrowFrame.size.width/2;
-    arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac - arrowFrame.size.height;
+    if (viewScreenFrame.origin.y >= RXScreenHeight/2) {
+        arrowFrame.origin.y = viewScreenFrame.origin.y  - arrowFrame.size.height;
+    } else {
+        arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac - arrowFrame.size.height;
+    }
     return arrowFrame;
 }
 
