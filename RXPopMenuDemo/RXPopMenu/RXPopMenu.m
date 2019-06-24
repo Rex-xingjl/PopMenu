@@ -208,10 +208,7 @@
 
 - (UIView *)popView {
     if (!_popView) {
-        CGRect arrow = [self getArrowFrame];
         CGRect frame = [self getPopFrame];
-        frame.origin.x = (arrow.origin.x + arrow.size.width/2.0) - frame.size.width/2.0;
-        
         self.popView = [[UIView alloc] initWithFrame:frame];
         _popView.layer.cornerRadius = self.cornerRadius;
         _popView.layer.masksToBounds = YES;
@@ -252,27 +249,23 @@
     CGRect viewScreenFrame = [self getShowViewFrame];
     CGSize menuSize = self.menuSize;
     CGRect popFrame;
-    CGFloat verticalSpac = 10;
-    if (viewScreenFrame.origin.x > RXScreenWidth/2 &&
-        viewScreenFrame.origin.y < RXScreenHeight/2) { // 右上方区域内
+    CGFloat verticalSpac = 10.f;
+    
+    BOOL right = viewScreenFrame.origin.x >= RXScreenWidth/2.f;
+    BOOL top = viewScreenFrame.origin.y <= RXScreenHeight/2.f;
+    
+    if (right) { // 左右方向
         CGFloat right_spac = RXScreenWidth - viewScreenFrame.origin.x - viewScreenFrame.size.width;
-        popFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2 - menuSize.width;
+        popFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2.f - menuSize.width;
+    } else {
+        CGFloat left_spac = viewScreenFrame.origin.x;
+        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2.f;
+    }
+    
+    if (top) { // 上下方向
         popFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac;
-    } else if (viewScreenFrame.origin.x < RXScreenWidth/2 &&
-               viewScreenFrame.origin.y < RXScreenHeight/2) { // 左上方区域内
-        CGFloat left_spac = viewScreenFrame.origin.x;
-        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
-        popFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac;
-    } else if (viewScreenFrame.origin.x < RXScreenWidth/2 &&
-              viewScreenFrame.origin.y >= RXScreenHeight/2) { // 左上方区域内
-        CGFloat left_spac = viewScreenFrame.origin.x;
-        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
-        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.0 - menuSize.height;
-    } else if (viewScreenFrame.origin.x >= RXScreenWidth/2 &&
-              viewScreenFrame.origin.y >= RXScreenHeight/2) { // 左上方区域内
-        CGFloat left_spac = viewScreenFrame.origin.x;
-        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
-        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.0 - menuSize.height;
+    } else {
+        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.f - menuSize.height;
     }
     popFrame.size = menuSize;
     return popFrame;
