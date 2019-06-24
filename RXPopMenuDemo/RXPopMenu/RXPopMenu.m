@@ -60,7 +60,7 @@
         containerView = showVC.view;
     }
     [containerView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-        if ([obj isKindOfClass:[self class]]) {
+        if ([obj isKindOfClass:self]) {
             [obj removeFromSuperview];
             obj = nil;
             *stop = YES;
@@ -191,7 +191,7 @@
 
 - (UITableView *)popTableView {
     if (!_popTableView) {
-        self.popTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height)];
+        self.popTableView = [[UITableView alloc] initWithFrame: CGRectMake(0, 0, self.menuSize.width, self.menuSize.height)];
         _popTableView.bounces = NO;
         _popTableView.delegate = self;
         _popTableView.dataSource = self;
@@ -245,18 +245,31 @@
     CGSize menuSize = self.menuSize;
     CGRect popFrame;
     CGFloat verticalSpac = 10;
-    if (viewScreenFrame.origin.x > RXScreenWidth/2 && viewScreenFrame.origin.y < RXScreenHeight/2) { // 右上方区域内
+    if (viewScreenFrame.origin.x > RXScreenWidth/2 &&
+        viewScreenFrame.origin.y < RXScreenHeight/2) { // 右上方区域内
         CGFloat right_spac = RXScreenWidth - viewScreenFrame.origin.x - viewScreenFrame.size.width;
         popFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2 - menuSize.width;
         popFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac;
-    } else if (viewScreenFrame.origin.x < RXScreenWidth/2 && viewScreenFrame.origin.y < RXScreenHeight/2) { // 左上方区域内
+    } else if (viewScreenFrame.origin.x < RXScreenWidth/2 &&
+               viewScreenFrame.origin.y < RXScreenHeight/2) { // 左上方区域内
         CGFloat left_spac = viewScreenFrame.origin.x;
         popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
         popFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac;
+    } else if (viewScreenFrame.origin.x < RXScreenWidth/2 &&
+              viewScreenFrame.origin.y >= RXScreenHeight/2) { // 左上方区域内
+        CGFloat left_spac = viewScreenFrame.origin.x;
+        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
+        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.0 - menuSize.height;
+    } else if (viewScreenFrame.origin.x >= RXScreenWidth/2 &&
+              viewScreenFrame.origin.y >= RXScreenHeight/2) { // 左上方区域内
+        CGFloat left_spac = viewScreenFrame.origin.x;
+        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2;
+        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.0 - menuSize.height;
     }
     popFrame.size = menuSize;
     return popFrame;
 }
+
 
 - (CGRect)getArrowFrame {
     CGRect viewScreenFrame = [self getShowViewFrame];
@@ -326,7 +339,7 @@
     cell.rightLabel.font = self.titleFont;
     cell.rightLabel.textColor = self.titleColor;
     cell.rightLabel.textAlignment = self.titleAlignment;
-    cell.leftImageView.image = [UIImage imageNamed:item.image];
+    cell.leftImageView.image = item.image ? [UIImage imageNamed:item.image] : nil;
     cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
     cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
     cell.backColor = self.backColor;
