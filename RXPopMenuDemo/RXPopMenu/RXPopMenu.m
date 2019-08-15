@@ -110,7 +110,7 @@
 
 - (CGFloat)widthOfMenu {
     CGFloat MINWIDTH = self.hideImage ? 70.f : 100.f;
-
+    
     RXPopMenuItem * maxItem;
     for (RXPopMenuItem * item in _items) {
         if (maxItem.title.length < item.title.length) {
@@ -250,16 +250,17 @@
     CGSize menuSize = self.menuSize;
     CGRect popFrame;
     CGFloat verticalSpac = 10.f;
+    CGFloat spac = 5.f;
     
     BOOL right = viewScreenFrame.origin.x >= RXScreenWidth/2.f;
     BOOL top = viewScreenFrame.origin.y <= RXScreenHeight/2.f;
     
     if (right) { // 左右方向
         CGFloat right_spac = RXScreenWidth - viewScreenFrame.origin.x - viewScreenFrame.size.width;
-        popFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2.f - menuSize.width;
+        popFrame.origin.x = MIN(RXScreenWidth - spac, viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2.f) - menuSize.width;
     } else {
         CGFloat left_spac = viewScreenFrame.origin.x;
-        popFrame.origin.x = viewScreenFrame.origin.x - left_spac/2.f;
+        popFrame.origin.x = MAX(spac, viewScreenFrame.origin.x - left_spac/2.f);
     }
     
     if (top) { // 上下方向
@@ -300,7 +301,7 @@
 }
 
 + (UIViewController *)VCForShowView:(id)view {
-
+    
     if ([view isKindOfClass:[UIView class]]) {
         for (UIView * next = [view superview]; next; next = next.superview) {
             UIResponder* nextResponder = [next nextResponder];
