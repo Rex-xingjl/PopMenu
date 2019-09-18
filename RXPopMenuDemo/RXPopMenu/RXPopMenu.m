@@ -11,9 +11,10 @@
 #import "RXPopMenuArrow.h"
 
 #define RXPopMenuCellID @"RXPopMenuCell"
-#define RXScreenWidth [UIScreen mainScreen].bounds.size.width
-#define RXScreenHeight [UIScreen mainScreen].bounds.size.height
+#define RXScreenWidth ([UIScreen mainScreen].bounds.size.width)
+#define RXScreenHeight ([UIScreen mainScreen].bounds.size.height)
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
+#define RXArrowSize CGSizeMake(13.0, 6.5)
 
 @interface RXPopMenu ()
 <UITableViewDelegate, UITableViewDataSource>
@@ -21,8 +22,10 @@
 @property (nonatomic, strong) UITableView *popTableView;
 @property (nonatomic, strong) RXPopMenuArrow * popArrow;
 @property (nonatomic, strong) UIView * popView;
-@property (nonatomic, strong) id showView;
+@property (nonatomic, strong) id targetView;
 @property (nonatomic, assign) BOOL inNaviBar;
+
+@property (nonatomic, assign) CGRect targetViewFrame;
 
 /** 元素集合 */
 @property (nonatomic, strong) NSArray <RXPopMenuItem *> * items;
@@ -47,17 +50,17 @@
 }
 
 + (void)hideBy:(id)target {
-    UIViewController * showVC;
+    UIViewController * targetVC;
     UIView * containerView;
     if ([target isKindOfClass:[UIView class]]) {
-        showVC = [RXPopMenu VCForShowView:target];
+        targetVC = [RXPopMenu VCForShowView:target];
     } else {
-        showVC = target;
+        targetVC = target;
     }
-    if (showVC.navigationController) {
-        containerView = showVC.navigationController.view;
+    if (targetVC.navigationController) {
+        containerView = targetVC.navigationController.view;
     } else {
-        containerView = showVC.view;
+        containerView = targetVC.view;
     }
     [containerView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj isKindOfClass:self]) {
@@ -69,20 +72,20 @@
 }
 
 - (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items {
-    self.showView = target;
+    self.targetView = target;
     if (![target isKindOfClass:[UIView class]] &&
         ![target isKindOfClass:[UIBarButtonItem class]]) {
         return;
     }
-    if ([NSStringFromClass([[self.showView superview] class]) isEqualToString:@"_UITAMICAdaptorView"]) {
+    if ([NSStringFromClass([[self.targetView superview] class]) isEqualToString:@"_UITAMICAdaptorView"]) {
         self.inNaviBar = YES; // 在navigationBar上面
     }
     self.items = items;
-    UIViewController * showVC = [RXPopMenu VCForShowView:self.showView];
-    if (showVC.navigationController) {
-        [showVC.navigationController.view addSubview:self];
+    UIViewController * targetVC = [RXPopMenu VCForShowView:self.targetView];
+    if (targetVC.navigationController) {
+        [targetVC.navigationController.view addSubview:self];
     } else {
-        [showVC.view addSubview:self];
+        [targetVC.view addSubview:self];
     }
 }
 
@@ -213,7 +216,6 @@
         _popView.layer.cornerRadius = self.cornerRadius;
         _popView.layer.masksToBounds = YES;
         _popView.backgroundColor = self.backColor;
-        [_popArrow addSubview:self.popArrow];
         [_popView addSubview:self.popTableView];
         [self addSubview:_popView];
     }
@@ -222,77 +224,76 @@
 
 - (RXPopMenuArrow *)popArrow {
     if (!_popArrow) {
-        CGRect viewScreenFrame = [self getShowViewFrame];
         CGRect frame = [self getArrowFrame];
         self.popArrow = [[RXPopMenuArrow alloc] initWithFrame:frame Color:self.backColor];
         [self addSubview:_popArrow];
-        if (frame.origin.y <= viewScreenFrame.origin.y) {
-            CGAffineTransform transform = CGAffineTransformIdentity;
-            _popArrow.transform = CGAffineTransformRotate(transform, M_PI);
+        if (frame.origin.y <= self.targetViewFrame.origin.y) {
+            _popArrow.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI);
         }
     }
     return _popArrow;
 }
 
-- (CGRect)getShowViewFrame {
-    CGRect viewScreenFrame;
-    if (self.inNaviBar) {
-        viewScreenFrame = [self.showView convertRect:[self.showView bounds] toView:[RXPopMenu VCForShowView:self.showView].navigationController.view];;
-    }  else {
-        UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
-        viewScreenFrame = [self.showView convertRect: [self.showView bounds] toView:window];
+- (CGRect)targetViewFrame {
+    CGRect targetFrame;
+    if (CGRectEqualToRect(_targetViewFrame, CGRectZero)) {
+        if (self.inNaviBar) {
+            targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
+        }  else {
+            UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
+            targetFrame = [self.targetView convertRect: [self.targetView bounds] toView:window];
+        }
+        _targetViewFrame = targetFrame;
     }
-    return viewScreenFrame;
+    return _targetViewFrame;
 }
 
 - (CGRect)getPopFrame {
-    CGRect viewScreenFrame = [self getShowViewFrame];
-    CGSize menuSize = self.menuSize;
-    CGRect popFrame;
-    CGFloat verticalSpac = 10.f;
+    CGRect targetFrame = self.targetViewFrame;
+    CGFloat maxY = CGRectGetMaxY(targetFrame);
+    CGFloat minY = CGRectGetMinY(targetFrame);
+    CGFloat centerX = targetFrame.origin.x + targetFrame.size.width/2.0;
+    
+    CGFloat menuWidth = self.menuSize.width;
+    CGFloat menuHeight = self.menuSize.height;
     CGFloat spac = 5.f;
     
-    BOOL right = viewScreenFrame.origin.x >= RXScreenWidth/2.f;
-    BOOL top = viewScreenFrame.origin.y <= RXScreenHeight/2.f;
+    CGRect popFrame = CGRectMake(centerX-menuWidth/2, 0, menuWidth, menuHeight);
+    NSInteger horizontal = targetFrame.origin.x / (RXScreenWidth/2.0);
+    NSInteger vertical = targetFrame.origin.y / (RXScreenHeight/2.0);
     
-    if (right) { // 左右方向
-        CGFloat right_spac = RXScreenWidth - viewScreenFrame.origin.x - viewScreenFrame.size.width;
-        popFrame.origin.x = MIN(RXScreenWidth - spac, viewScreenFrame.origin.x + viewScreenFrame.size.width + right_spac/2.f) - menuSize.width;
-    } else {
-        CGFloat left_spac = viewScreenFrame.origin.x;
-        popFrame.origin.x = MAX(spac, viewScreenFrame.origin.x - left_spac/2.f);
+    if (horizontal == 0) { // left
+        popFrame.origin.x = MAX(popFrame.origin.x, spac);
+    } else if (horizontal == 1) {
+        popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
-    
-    if (top) { // 上下方向
-        popFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac;
-    } else {
-        popFrame.origin.y = viewScreenFrame.origin.y - verticalSpac/2.f - menuSize.height;
+    if (vertical == 0) {
+        popFrame.origin.y = MAX(maxY, spac);
+    } else if (vertical == 1) {
+        popFrame.origin.y = MIN(minY-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
     }
-    popFrame.size = menuSize;
     return popFrame;
 }
 
-
 - (CGRect)getArrowFrame {
-    CGRect viewScreenFrame = [self getShowViewFrame];
-    CGRect arrowFrame = CGRectMake(0, 0, 13, 13/2);
-    CGFloat verticalSpac = 10;
+    CGRect viewScreenFrame = self.targetViewFrame;
+    CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
     arrowFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width/2 - arrowFrame.size.width/2;
     if (viewScreenFrame.origin.y >= RXScreenHeight/2) {
         arrowFrame.origin.y = viewScreenFrame.origin.y  - arrowFrame.size.height;
     } else {
-        arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height + verticalSpac - arrowFrame.size.height;
+        arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height - arrowFrame.size.height;
     }
     return arrowFrame;
 }
 
-- (void)setShowView:(id)showView {
-    if (_showView != showView) {
-        if ([showView isKindOfClass:[UIView class]]) {
-            _showView = showView;
-        } else if ([showView isKindOfClass:[UIBarButtonItem class]]) {
-            if ([showView customView]) {
-                _showView = [showView customView];
+- (void)setTargetView:(id)targetView {
+    if (_targetView != targetView) {
+        if ([targetView isKindOfClass:[UIView class]]) {
+            _targetView = targetView;
+        } else if ([targetView isKindOfClass:[UIBarButtonItem class]]) {
+            if ([targetView customView]) {
+                _targetView = [targetView customView];
             } else {
                 NSAssert(1, @"Unsupport Type:Is not a View");
             }
@@ -349,8 +350,10 @@
     cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
     cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
     cell.backColor = self.backColor;
-    CGFloat left = indexPath.row+1 == self.items.count ? self.menuSize.width : 11;
-    cell.separatorInset = UIEdgeInsetsMake(0, left, 0, left);
+    
+    BOOL lastOne = indexPath.row+1 == self.items.count;
+    CGFloat left = lastOne ? self.menuSize.width : 11;
+    cell.separatorInset = UIEdgeInsetsMake(0, left, 0, lastOne ? 0 : left);
     return cell;
 }
 
