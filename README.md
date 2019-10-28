@@ -13,4 +13,4 @@ A menu to show selections
 
 ps.模拟器因为像素原因 会出现奇怪线条问题 真机不存在 
 
-![PopViewExample](Simulator Screen Shot.png "PopViewExample")
+![PopViewExample](demo_image.png "PopViewExample")
