@@ -15,11 +15,12 @@
 		4470C2D7204F828700AA0C79 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 4470C2D6204F828700AA0C79 /* main.m */; };
 		4470C2E1204F828700AA0C79 /* RXPopMenuDemoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4470C2E0204F828700AA0C79 /* RXPopMenuDemoTests.m */; };
 		4470C2EC204F828700AA0C79 /* RXPopMenuDemoUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 4470C2EB204F828700AA0C79 /* RXPopMenuDemoUITests.m */; };
-		448B40012052293B0061FADA /* RXPopMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 448B3FFD2052293B0061FADA /* RXPopMenuCell.m */; };
-		448B40022052293B0061FADA /* RXPopMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 448B3FFE2052293B0061FADA /* RXPopMenu.m */; };
-		448B40032052293B0061FADA /* RXPopMenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 448B3FFF2052293B0061FADA /* RXPopMenuCell.xib */; };
-		448B4004205256080061FADA /* RXPopMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 448B3FFE2052293B0061FADA /* RXPopMenu.m */; };
-		CDC066CE208F12C9000C1D33 /* RXPopMenuArrow.m in Sources */ = {isa = PBXBuildFile; fileRef = CDC066CD208F12C9000C1D33 /* RXPopMenuArrow.m */; };
+		CDCEF42925ED00F500986E00 /* RXPopMenuCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDCEF41F25ED00F500986E00 /* RXPopMenuCell.xib */; };
+		CDCEF42A25ED00F500986E00 /* RXPopMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCEF42125ED00F500986E00 /* RXPopMenu.m */; };
+		CDCEF42B25ED00F500986E00 /* RXPopMenuCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCEF42225ED00F500986E00 /* RXPopMenuCell.m */; };
+		CDCEF42C25ED00F500986E00 /* RXPopBoxCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CDCEF42325ED00F500986E00 /* RXPopBoxCell.xib */; };
+		CDCEF42D25ED00F500986E00 /* RXPopMenuArrow.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCEF42725ED00F500986E00 /* RXPopMenuArrow.m */; };
+		CDCEF42E25ED00F500986E00 /* RXPopBoxCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CDCEF42825ED00F500986E00 /* RXPopBoxCell.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,13 +57,16 @@
 		4470C2E7204F828700AA0C79 /* RXPopMenuDemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RXPopMenuDemoUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		4470C2EB204F828700AA0C79 /* RXPopMenuDemoUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuDemoUITests.m; sourceTree = "<group>"; };
 		4470C2ED204F828700AA0C79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		448B3FFC2052293B0061FADA /* RXPopMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenu.h; sourceTree = "<group>"; };
-		448B3FFD2052293B0061FADA /* RXPopMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuCell.m; sourceTree = "<group>"; };
-		448B3FFE2052293B0061FADA /* RXPopMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenu.m; sourceTree = "<group>"; };
-		448B3FFF2052293B0061FADA /* RXPopMenuCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RXPopMenuCell.xib; sourceTree = "<group>"; };
-		448B40002052293B0061FADA /* RXPopMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenuCell.h; sourceTree = "<group>"; };
-		CDC066CC208F12C9000C1D33 /* RXPopMenuArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenuArrow.h; sourceTree = "<group>"; };
-		CDC066CD208F12C9000C1D33 /* RXPopMenuArrow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuArrow.m; sourceTree = "<group>"; };
+		CDCEF41F25ED00F500986E00 /* RXPopMenuCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RXPopMenuCell.xib; sourceTree = "<group>"; };
+		CDCEF42025ED00F500986E00 /* RXPopBoxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopBoxCell.h; sourceTree = "<group>"; };
+		CDCEF42125ED00F500986E00 /* RXPopMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenu.m; sourceTree = "<group>"; };
+		CDCEF42225ED00F500986E00 /* RXPopMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuCell.m; sourceTree = "<group>"; };
+		CDCEF42325ED00F500986E00 /* RXPopBoxCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RXPopBoxCell.xib; sourceTree = "<group>"; };
+		CDCEF42425ED00F500986E00 /* RXPopMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenuCell.h; sourceTree = "<group>"; };
+		CDCEF42525ED00F500986E00 /* RXPopMenuArrow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenuArrow.h; sourceTree = "<group>"; };
+		CDCEF42625ED00F500986E00 /* RXPopMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenu.h; sourceTree = "<group>"; };
+		CDCEF42725ED00F500986E00 /* RXPopMenuArrow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuArrow.m; sourceTree = "<group>"; };
+		CDCEF42825ED00F500986E00 /* RXPopBoxCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopBoxCell.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -148,13 +152,16 @@
 		448B3FFB2052293B0061FADA /* RXPopMenu */ = {
 			isa = PBXGroup;
 			children = (
-				CDC066CC208F12C9000C1D33 /* RXPopMenuArrow.h */,
-				CDC066CD208F12C9000C1D33 /* RXPopMenuArrow.m */,
-				448B3FFC2052293B0061FADA /* RXPopMenu.h */,
-				448B3FFE2052293B0061FADA /* RXPopMenu.m */,
-				448B40002052293B0061FADA /* RXPopMenuCell.h */,
-				448B3FFD2052293B0061FADA /* RXPopMenuCell.m */,
-				448B3FFF2052293B0061FADA /* RXPopMenuCell.xib */,
+				CDCEF42025ED00F500986E00 /* RXPopBoxCell.h */,
+				CDCEF42825ED00F500986E00 /* RXPopBoxCell.m */,
+				CDCEF42325ED00F500986E00 /* RXPopBoxCell.xib */,
+				CDCEF42625ED00F500986E00 /* RXPopMenu.h */,
+				CDCEF42125ED00F500986E00 /* RXPopMenu.m */,
+				CDCEF42525ED00F500986E00 /* RXPopMenuArrow.h */,
+				CDCEF42725ED00F500986E00 /* RXPopMenuArrow.m */,
+				CDCEF42425ED00F500986E00 /* RXPopMenuCell.h */,
+				CDCEF42225ED00F500986E00 /* RXPopMenuCell.m */,
+				CDCEF41F25ED00F500986E00 /* RXPopMenuCell.xib */,
 			);
 			name = RXPopMenu;
 			path = RXPopMenuDemo/RXPopMenu;
@@ -266,7 +273,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				448B40032052293B0061FADA /* RXPopMenuCell.xib in Resources */,
+				CDCEF42C25ED00F500986E00 /* RXPopBoxCell.xib in Resources */,
+				CDCEF42925ED00F500986E00 /* RXPopMenuCell.xib in Resources */,
 				4470C2D4204F828700AA0C79 /* LaunchScreen.storyboard in Resources */,
 				4470C2D1204F828700AA0C79 /* Assets.xcassets in Resources */,
 				4470C2CF204F828700AA0C79 /* Main.storyboard in Resources */,
@@ -294,10 +302,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				448B40012052293B0061FADA /* RXPopMenuCell.m in Sources */,
+				CDCEF42B25ED00F500986E00 /* RXPopMenuCell.m in Sources */,
+				CDCEF42A25ED00F500986E00 /* RXPopMenu.m in Sources */,
+				CDCEF42E25ED00F500986E00 /* RXPopBoxCell.m in Sources */,
+				CDCEF42D25ED00F500986E00 /* RXPopMenuArrow.m in Sources */,
 				4470C2CC204F828700AA0C79 /* ViewController.m in Sources */,
-				CDC066CE208F12C9000C1D33 /* RXPopMenuArrow.m in Sources */,
-				448B40022052293B0061FADA /* RXPopMenu.m in Sources */,
 				4470C2D7204F828700AA0C79 /* main.m in Sources */,
 				4470C2C9204F828700AA0C79 /* AppDelegate.m in Sources */,
 			);
@@ -307,7 +316,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				448B4004205256080061FADA /* RXPopMenu.m in Sources */,
 				4470C2E1204F828700AA0C79 /* RXPopMenuDemoTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -463,12 +471,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KB5L23C33F;
 				INFOPLIST_FILE = RXPopMenuDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Rex.RXPopMenuDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -477,12 +487,14 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KB5L23C33F;
 				INFOPLIST_FILE = RXPopMenuDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.Rex.RXPopMenuDemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

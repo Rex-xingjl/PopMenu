@@ -12,12 +12,12 @@
 
 - (void)setBackColor:(UIColor *)backColor {
     _backColor = backColor;
-    
-    self.backgroundColor = backColor;
+    self.contentView.backgroundColor = backColor;
 }
 
 - (void)awakeFromNib {
     [super awakeFromNib];
+    _leftImageView.contentMode = UIViewContentModeCenter;
     _leftImageView.userInteractionEnabled = NO;
     _rightLabel.userInteractionEnabled = NO;
 }

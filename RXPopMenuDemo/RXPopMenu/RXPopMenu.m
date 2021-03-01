@@ -9,17 +9,22 @@
 #import "RXPopMenu.h"
 #import "RXPopMenuCell.h"
 #import "RXPopMenuArrow.h"
+#import "RXPopBoxCell.h"
 
 #define RXPopMenuCellID @"RXPopMenuCell"
+#define RXPopBoxCellID @"RXPopBoxCell"
 #define RXScreenWidth ([UIScreen mainScreen].bounds.size.width)
 #define RXScreenHeight ([UIScreen mainScreen].bounds.size.height)
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define RXArrowSize CGSizeMake(13.0, 6.5)
 
 @interface RXPopMenu ()
-<UITableViewDelegate, UITableViewDataSource>
+<UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource>
+
+@property (nonatomic, assign) RXPopMenuType menuType;
 
 @property (nonatomic, strong) UITableView *popTableView;
+@property (nonatomic, strong) UICollectionView * popCollectionView;
 @property (nonatomic, strong) RXPopMenuArrow * popArrow;
 @property (nonatomic, strong) UIView * popView;
 @property (nonatomic, strong) id targetView;
@@ -36,7 +41,6 @@
 @synthesize menuSize = _menuSize;
 @synthesize backColor = _backColor;
 @synthesize itemHeight = _itemHeight;
-@synthesize cornerRadius = _cornerRadius;
 @synthesize titleFont = _titleFont;
 @synthesize titleColor = _titleColor;
 
@@ -44,8 +48,14 @@
 
 + (id)menu {
     RXPopMenu * menu = [[RXPopMenu alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    menu.alpha = 0.95f;
     menu.backgroundColor = [UIColor clearColor];
+    return menu;
+}
+
++ (id)menuWithType:(RXPopMenuType)type {
+    RXPopMenu * menu = [[RXPopMenu alloc] initWithFrame:[UIScreen mainScreen].bounds];
+    menu.backgroundColor = [UIColor clearColor];
+    menu.menuType = type;
     return menu;
 }
 
@@ -64,11 +74,19 @@
     }
     [containerView.subviews enumerateObjectsUsingBlock:^(__kindof UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         if ([obj isKindOfClass:self]) {
-            [obj removeFromSuperview];
+            RXPopMenu * menu = (RXPopMenu *)obj;
+            [menu hideMenu];
             obj = nil;
             *stop = YES;
         }
     }];
+}
+
+- (void)hideMenu {
+    [self removeFromSuperview];
+    if (self.menuHideDone) {
+        self.menuHideDone();
+    }
 }
 
 - (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items {
@@ -87,6 +105,14 @@
     } else {
         [targetVC.view addSubview:self];
     }
+    UIImpactFeedbackStyle style;
+    if (@available(iOS 13.0, *)) {
+        style = UIImpactFeedbackStyleSoft;
+    } else {
+        style = UIImpactFeedbackStyleMedium;
+    }
+    UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
+    [generator impactOccurred];
 }
 
 - (void)setItems:(NSArray<RXPopMenuItem *> *)items {
@@ -98,39 +124,54 @@
             }
         }
         [self popView];
-        [self popArrow];
+        if (!_hideArrow) [self popArrow];
         [self.popTableView reloadData];
     }
 }
 
 - (CGSize)menuSize {
     if (CGSizeEqualToSize(CGSizeZero, _menuSize)) {
-        return CGSizeMake([self widthOfMenu], self.itemHeight * _items.count);
-    } else {
-        return _menuSize;
-    }
-}
-
-- (CGFloat)widthOfMenu {
-    CGFloat MINWIDTH = self.hideImage ? 70.f : 100.f;
-    
-    RXPopMenuItem * maxItem;
-    for (RXPopMenuItem * item in _items) {
-        if (maxItem.title.length < item.title.length) {
-            maxItem = item;
+        switch (self.menuType) {
+            case RXPopMenuList: {
+                CGFloat MINWIDTH = self.hideImage ? 70.f : 100.f;
+                RXPopMenuItem * maxItem;
+                for (RXPopMenuItem * item in _items) {
+                    if (item.title.length > maxItem.title.length) {
+                        maxItem = item;
+                    }
+                }
+                CGFloat otherWidth = 60 - (self.hideImage ? 30.f : 0.f);
+                CGFloat maxTextWidth = [maxItem.title sizeWithAttributes:@{NSFontAttributeName:self.titleFont}].width;
+                CGFloat itemWidth = maxTextWidth + 1 + otherWidth;
+                itemWidth = itemWidth <= MINWIDTH ? MINWIDTH : itemWidth;
+                _menuSize = CGSizeMake(itemWidth, self.itemHeight * _items.count);
+            } break;
+                
+            case RXPopMenuBox: {
+                NSInteger line = _items.count/5 + (_items.count%5>0);
+                CGFloat width = MIN(_items.count, 5)*60 + 20;
+                CGFloat height = line*54 + (line-1)*10 + 20;
+                _menuSize = CGSizeMake(width, height);
+            } break;
+            default:  break;
         }
     }
-    CGFloat otherWidth = 60 - (self.hideImage ? 30.f : 0.f);
-    CGFloat maxTextWidth = [maxItem.title sizeWithAttributes:@{NSFontAttributeName:self.titleFont}].width;
-    CGFloat itemWidth = maxTextWidth + 1 + otherWidth;
-    itemWidth = itemWidth <= MINWIDTH ? MINWIDTH : itemWidth;
-    return itemWidth;
+    return _menuSize;
 }
 
 - (void)setMenuSize:(CGSize)menuSize {
     if (!CGSizeEqualToSize(_menuSize, menuSize)) {
         _menuSize = menuSize;
-        self.popTableView.frame = CGRectMake(0, 0, _menuSize.width, _menuSize.height);
+        switch (self.menuType) {
+            case RXPopMenuList: {
+                self.popTableView.frame = CGRectMake(0, 0, _menuSize.width, _menuSize.height);
+            } break;
+            case RXPopMenuBox: {
+                self.popCollectionView.frame = CGRectMake(0, 0, _menuSize.width, _menuSize.height);
+            } break;
+            default:
+                break;
+        }
     }
 }
 
@@ -142,11 +183,12 @@
     if (_itemHeight != itemHeight) {
         _itemHeight = itemHeight;
         [_popTableView reloadData];
+        [_popCollectionView reloadData];
     }
 }
 
 - (UIColor *)backColor {
-    return _backColor ? : RXHexRGB(0x222222);
+    return _backColor ? : [[UIColor blackColor] colorWithAlphaComponent:0.8];
 }
 
 - (void)setBackColor:(UIColor *)backColor {
@@ -159,15 +201,8 @@
     return _cornerRadius <= 0 ? 4.f : _cornerRadius;
 }
 
-- (void)setCornerRadius:(CGFloat)cornerRadius {
-    if (_cornerRadius != cornerRadius) {
-        _cornerRadius = cornerRadius;
-        self.popView.superview.layer.cornerRadius = self.cornerRadius;
-    }
-}
-
 - (UIFont *)titleFont {
-    return _titleFont ? : [UIFont systemFontOfSize:16.f];
+    return _titleFont ? : [UIFont systemFontOfSize:_menuType == RXPopMenuList ? 16.f : 13.f];
 }
 
 - (void)setTitleFont:(UIFont *)titleFont {
@@ -185,38 +220,74 @@
     if (_titleColor != titleColor) {
         _titleColor = titleColor;
         [_popTableView reloadData];
+        [_popCollectionView reloadData];
     }
 }
 
 - (UIColor *)lineColor {
-    return _lineColor ? : RXHexRGB(0x7E7E7E);
+    return _lineColor ? : [UIColor whiteColor];
 }
 
 - (UITableView *)popTableView {
     if (!_popTableView) {
-        self.popTableView = [[UITableView alloc] initWithFrame: CGRectMake(0, 0, self.menuSize.width, self.menuSize.height)];
+        _popTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height)];
         _popTableView.bounces = NO;
         _popTableView.delegate = self;
         _popTableView.dataSource = self;
-        _popTableView.separatorColor = self.lineColor;
-        _popTableView.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0);
-        _popTableView.backgroundColor = self.backColor;
-        _popTableView.clipsToBounds = YES;
+        _popTableView.separatorStyle = UITableViewCellSeparatorStyleNone;
         _popTableView.tableFooterView = [[UIView alloc] init];
+        _popTableView.backgroundColor = [UIColor clearColor];
+        _popTableView.layer.cornerRadius = self.cornerRadius;
+        _popTableView.layer.masksToBounds = YES;
+    
         [_popTableView registerNib:[UINib nibWithNibName:RXPopMenuCellID bundle:[NSBundle mainBundle]]
             forCellReuseIdentifier:RXPopMenuCellID];
     }
     return _popTableView;
 }
 
+- (UICollectionView *)popCollectionView {
+    if (!_popCollectionView) {
+        UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
+        layout.itemSize = CGSizeMake(60, 54);
+        layout.minimumLineSpacing = 10;
+        layout.minimumInteritemSpacing = 0;
+        _popCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height) collectionViewLayout:layout];
+        _popCollectionView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
+        _popCollectionView.delegate = (id)self;
+        _popCollectionView.dataSource = self;
+        _popCollectionView.bounces = NO;
+        _popCollectionView.backgroundColor = self.backColor;;
+        _popCollectionView.layer.cornerRadius = self.cornerRadius;
+        _popCollectionView.layer.masksToBounds = YES;
+        
+        [_popCollectionView registerNib:[UINib nibWithNibName:RXPopBoxCellID bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:RXPopBoxCellID];
+    }
+    return _popCollectionView;
+}
+
 - (UIView *)popView {
     if (!_popView) {
         CGRect frame = [self getPopFrame];
-        self.popView = [[UIView alloc] initWithFrame:frame];
-        _popView.layer.cornerRadius = self.cornerRadius;
-        _popView.layer.masksToBounds = YES;
-        _popView.backgroundColor = self.backColor;
-        [_popView addSubview:self.popTableView];
+        UIView * view = [[UIView alloc] initWithFrame:frame];
+        view.layer.cornerRadius = self.cornerRadius;
+        view.layer.shadowColor = [[UIColor blackColor] colorWithAlphaComponent:0.12].CGColor;
+        view.layer.shadowOffset = CGSizeMake(0, 4);
+        view.layer.shadowOpacity = 1;
+        view.layer.shadowRadius = 10;
+        
+        _popView = view;
+
+        switch (self.menuType) {
+            case RXPopMenuList: {
+                [_popView addSubview:self.popTableView];
+            } break;
+            case RXPopMenuBox: {
+                [_popView addSubview:self.popCollectionView];
+            } break;
+            default:
+                break;
+        }
         [self addSubview:_popView];
     }
     return _popView;
@@ -239,7 +310,7 @@
     if (CGRectEqualToRect(_targetViewFrame, CGRectZero)) {
         if (self.inNaviBar) {
             targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
-        }  else {
+        } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
             targetFrame = [self.targetView convertRect: [self.targetView bounds] toView:window];
         }
@@ -253,23 +324,24 @@
     CGFloat maxY = CGRectGetMaxY(targetFrame);
     CGFloat minY = CGRectGetMinY(targetFrame);
     CGFloat centerX = targetFrame.origin.x + targetFrame.size.width/2.0;
+    CGFloat centerY = targetFrame.origin.y + targetFrame.size.height/2.0;
     
     CGFloat menuWidth = self.menuSize.width;
     CGFloat menuHeight = self.menuSize.height;
-    CGFloat spac = 5.f;
+    CGFloat spac = 10.f;
     
-    CGRect popFrame = CGRectMake(centerX-menuWidth/2, 0, menuWidth, menuHeight);
-    NSInteger horizontal = targetFrame.origin.x / (RXScreenWidth/2.0);
-    NSInteger vertical = targetFrame.origin.y / (RXScreenHeight/2.0);
+    CGRect popFrame = CGRectMake(centerX-menuWidth/2.0, 0, menuWidth, menuHeight);
+    CGFloat horizontal = centerX / RXScreenWidth;
+    CGFloat vertical = centerY / RXScreenHeight ;
     
-    if (horizontal == 0) { // left
+    if (horizontal < 0.5) { // left
         popFrame.origin.x = MAX(popFrame.origin.x, spac);
-    } else if (horizontal == 1) {
+    } else {
         popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
-    if (vertical == 0) {
+    if (vertical < 0.3) {
         popFrame.origin.y = MAX(maxY, spac);
-    } else if (vertical == 1) {
+    } else {
         popFrame.origin.y = MIN(minY-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
     }
     return popFrame;
@@ -278,11 +350,11 @@
 - (CGRect)getArrowFrame {
     CGRect viewScreenFrame = self.targetViewFrame;
     CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
-    arrowFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width/2 - arrowFrame.size.width/2;
-    if (viewScreenFrame.origin.y >= RXScreenHeight/2) {
-        arrowFrame.origin.y = viewScreenFrame.origin.y  - arrowFrame.size.height;
-    } else {
+    arrowFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width/2.0 - arrowFrame.size.width/2.0;
+    if (viewScreenFrame.origin.y < RXScreenHeight*0.3) {
         arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height - arrowFrame.size.height;
+    } else {
+        arrowFrame.origin.y = viewScreenFrame.origin.y  - arrowFrame.size.height;
     }
     return arrowFrame;
 }
@@ -331,7 +403,7 @@
     return nil;
 }
 
-#pragma mark - Delegate -
+#pragma mark - UITableView Delegate -
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.items.count;
@@ -343,17 +415,17 @@
     RXPopMenuCell * cell = [tableView dequeueReusableCellWithIdentifier:RXPopMenuCellID forIndexPath:indexPath];
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     cell.rightLabel.text = item.title;
-    cell.rightLabel.font = self.titleFont;
-    cell.rightLabel.textColor = self.titleColor;
-    cell.rightLabel.textAlignment = self.titleAlignment;
+    cell.rightLabel.font = item.titleFont ? : self.titleFont;
+    cell.rightLabel.textColor = item.titleColor ? : self.titleColor;
+    cell.rightLabel.textAlignment = self.titleAlignment <= 0 ? (item.image ? NSTextAlignmentLeft : NSTextAlignmentCenter) : self.titleAlignment;
     cell.leftImageView.image = item.image ? [UIImage imageNamed:item.image] : nil;
     cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
     cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
     cell.backColor = self.backColor;
+    cell.lineView.backgroundColor = self.lineColor;
     
     BOOL lastOne = indexPath.row+1 == self.items.count;
-    CGFloat left = lastOne ? self.menuSize.width : 11;
-    cell.separatorInset = UIEdgeInsetsMake(0, left, 0, lastOne ? 0 : left);
+    cell.lineView.hidden = lastOne;
     return cell;
 }
 
@@ -364,18 +436,97 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     if (self.itemActions) {
         self.itemActions(self.items[indexPath.row]);
-        [self removeFromSuperview];
+        [self hideMenu];
+    }
+}
+
+#pragma mark - UICollectionView Delegate -
+
+- (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
+    return self.items.count;
+}
+
+- (__kindof UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
+    RXPopMenuItem * item = self.items[indexPath.row];
+    item.index = indexPath.row;
+    RXPopBoxCell * cell = [collectionView dequeueReusableCellWithReuseIdentifier:RXPopBoxCellID forIndexPath:indexPath];
+    cell.bottomLabel.text = item.title;
+    cell.bottomLabel.font = item.titleFont ? : self.titleFont;
+    cell.bottomLabel.textColor = item.titleColor ? : self.titleColor;
+    cell.bottomLabel.textAlignment = self.titleAlignment <= 0 ? NSTextAlignmentCenter : self.titleAlignment;
+    cell.clipsToBounds = NO;
+    cell.topImageView.image = item.image ? [UIImage imageNamed:item.image] : nil;
+//    cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
+//    cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
+//    cell.backColor = self.backColor;
+    return cell;
+}
+
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    if (self.itemActions) {
+        self.itemActions(self.items[indexPath.row]);
+        [self hideMenu];
     }
 }
 
 - (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-    [self removeFromSuperview];
+    [self hideMenu];
 }
 
 @end
 
 
 @implementation RXPopMenuItem
+
++ (id)itemWithType:(RXPopMenuItemType)type {
+    RXPopMenuItem * item = [[RXPopMenuItem alloc] init];
+    NSString * title = nil;
+    NSString * image = nil;
+    switch (type) {
+        case RXPopMenuItemRevoke:
+            title = @"撤回"; image = @"im_longPress_revoke";
+            break;
+        case RXPopMenuItemEar:
+            title = @"听筒播放"; image = @"im_longPress_ear";
+            break;
+        case RXPopMenuItemSpeaker:
+            title = @"扬声器播放"; image = @"im_longPress_speaker";
+            break;
+        case RXPopMenuItemDelete:
+            title = @"删除"; image = @"im_longPress_delete";
+            break;
+        case RXPopMenuItemQuote:
+            title = @"引用"; image = @"im_longPress_quote";
+            break;
+        case RXPopMenuItemMulti:
+            title = @"多选"; image = @"im_longPress_multi";
+            break;
+        case RXPopMenuItemTransfer:
+            title = @"转文字"; image = @"im_longPress_transfer";
+            break;
+        case RXPopMenuItemCloseText:
+            title = @"收起文字"; image = @"im_longPress_transfer";
+            break;
+        case RXPopMenuItemForward:
+            title = @"转发"; image = @"im_longPress_forward";
+            break;
+        case RXPopMenuItemShare:
+            title = @"分享"; image = @"im_longPress_share";
+            break;
+        case RXPopMenuItemRead:
+            title = @"朗读"; image = @"im_longPress_read";
+            break;
+        case RXPopMenuItemCopy:
+            title = @"复制"; image = @"im_longPress_copy";
+            break;
+        default:
+            break;
+    }
+    item.itemType = type;
+    item.title = title;
+    item.image = image;
+    return item;
+}
 
 + (id)itemTitle:(NSString *)title image:(NSString *)image {
     RXPopMenuItem * item = [[RXPopMenuItem alloc] init];
@@ -387,6 +538,13 @@
 + (id)itemTitle:(NSString *)title {
     RXPopMenuItem * item = [[RXPopMenuItem alloc] init];
     item.title = title;
+    item.image = nil;
+    return item;
+}
+
++ (id)itemTitle:(NSString *)title titleColor:(UIColor *)color {
+    RXPopMenuItem * item = [RXPopMenuItem itemTitle:title];
+    item.titleColor = color;
     return item;
 }
 

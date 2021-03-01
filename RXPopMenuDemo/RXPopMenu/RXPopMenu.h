@@ -33,17 +33,23 @@
 #import <UIKit/UIKit.h>
 @class RXPopMenuItem;
 
+typedef enum : NSUInteger {
+    RXPopMenuList = 0,
+    RXPopMenuBox,
+} RXPopMenuType;
+
 @interface RXPopMenu : UIView
 
 #pragma mark - ShowMenu
 
 /** 创建弹出框 */
 + (id)menu;
++ (id)menuWithType:(RXPopMenuType)type;
 
 /** 隐藏弹出框 */
 + (void)hideBy:(id)target;
 
-/** 展示弹出框
+/** 展示弹出框 修改任意属性要在该方法调用前
  * target: 弹出框指向控件 可以是view或者UIBarButtonItem
  * items: 弹出框包含的选项
  */
@@ -54,9 +60,14 @@
  */
 @property (nonatomic, copy) void (^itemActions)(RXPopMenuItem * item);
 
+@property (nonatomic, copy) void (^menuHideDone)(void);
+
 #pragma mark - Options
 
-/** 弹出元素是否隐藏左侧的图片 默认 NO */
+/** 弹出框是否隐藏箭头 默认 NO */
+@property (nonatomic, assign) BOOL hideArrow;
+
+/** 弹出元素是否隐藏图片 默认 NO */
 @property (nonatomic, assign) BOOL hideImage;
 
 /** 弹出框大小 默认 CGSizeMake(图片宽度+文字最大宽度, 50 * items.count) */
@@ -71,13 +82,13 @@
 /** 单个元素高度 默认 50.f */
 @property (nonatomic, assign) CGFloat itemHeight;
 
-/** 统一文字颜色 默认 whiteColor */
+/** 统一文字颜色 默认 纯黑色 */
 @property (nonatomic, strong) UIColor * titleColor;
 
-/** 统一文字大小 默认 16 */
+/** 统一文字大小 默认 listType 16 boxType 13 */
 @property (nonatomic, strong) UIFont * titleFont;
 
-/** 统一文字对齐方式 默认 左侧对其 */
+/** 统一文字对齐方式 默认 listType 有图片左对齐 无图片中对齐 boxType 居中对齐 */
 @property (nonatomic, assign) NSTextAlignment titleAlignment;
 
 /** 统一线条颜色 不设置会自动适配 */
@@ -87,14 +98,37 @@
 
 #pragma mark -
 
+typedef NS_ENUM(NSUInteger, RXPopMenuItemType) {
+    RXPopMenuItemRevoke,
+    RXPopMenuItemEar,
+    RXPopMenuItemSpeaker,
+    RXPopMenuItemDelete,
+    RXPopMenuItemQuote,
+    RXPopMenuItemMulti,
+    RXPopMenuItemTransfer,
+    RXPopMenuItemCloseText,
+    RXPopMenuItemForward,
+    RXPopMenuItemShare,
+    RXPopMenuItemCopy,
+    RXPopMenuItemRead,
+};
+
 @interface RXPopMenuItem : NSObject
+
++ (id)itemWithType:(RXPopMenuItemType)type;
 
 + (id)itemTitle:(NSString *)title image:(NSString *)image;
 
 + (id)itemTitle:(NSString *)title;
 
++ (id)itemTitle:(NSString *)title titleColor:(UIColor *)tcolor;
+
+@property (nonatomic, assign) RXPopMenuItemType itemType;
 @property (nonatomic, assign) NSInteger index;
 @property (nonatomic, strong) NSString * title;
 @property (nonatomic, strong) NSString * image;
+
+@property (nonatomic, strong) UIColor * titleColor;
+@property (nonatomic, strong) UIFont * titleFont;
 
 @end
