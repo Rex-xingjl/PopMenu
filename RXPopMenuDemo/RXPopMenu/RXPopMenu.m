@@ -105,13 +105,7 @@
     } else {
         [targetVC.view addSubview:self];
     }
-    UIImpactFeedbackStyle style;
-    if (@available(iOS 13.0, *)) {
-        style = UIImpactFeedbackStyleSoft;
-    } else {
-        style = UIImpactFeedbackStyleMedium;
-    }
-    UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
+    UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle: @available(iOS 13.0, *) ? UIImpactFeedbackStyleSoft : UIImpactFeedbackStyleMedium];
     [generator impactOccurred];
 }
 
@@ -254,7 +248,7 @@
         layout.minimumInteritemSpacing = 0;
         _popCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height) collectionViewLayout:layout];
         _popCollectionView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
-        _popCollectionView.delegate = (id)self;
+        _popCollectionView.delegate = self;
         _popCollectionView.dataSource = self;
         _popCollectionView.bounces = NO;
         _popCollectionView.backgroundColor = self.backColor;;
@@ -312,27 +306,31 @@
             targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
         } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
-            targetFrame = [self.targetView convertRect: [self.targetView bounds] toView:window];
+            targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:window];
         }
         _targetViewFrame = targetFrame;
     }
     return _targetViewFrame;
 }
 
-- (CGRect)getPopFrame {
+- (CGPoint)targetViewCenter {
     CGRect targetFrame = self.targetViewFrame;
-    CGFloat maxY = CGRectGetMaxY(targetFrame);
-    CGFloat minY = CGRectGetMinY(targetFrame);
     CGFloat centerX = targetFrame.origin.x + targetFrame.size.width/2.0;
     CGFloat centerY = targetFrame.origin.y + targetFrame.size.height/2.0;
+    return CGPointMake(centerX, centerY);
+}
+
+- (CGRect)getPopFrame {
+    CGRect targetFrame = self.targetViewFrame;
+    CGPoint targetCenter = self.targetViewCenter;
     
     CGFloat menuWidth = self.menuSize.width;
     CGFloat menuHeight = self.menuSize.height;
     CGFloat spac = 10.f;
     
-    CGRect popFrame = CGRectMake(centerX-menuWidth/2.0, 0, menuWidth, menuHeight);
-    CGFloat horizontal = centerX / RXScreenWidth;
-    CGFloat vertical = centerY / RXScreenHeight ;
+    CGRect popFrame = CGRectMake(targetCenter.x-menuWidth/2.0, 0, menuWidth, menuHeight);
+    CGFloat horizontal = targetCenter.x / RXScreenWidth;
+    CGFloat vertical = targetCenter.y / RXScreenHeight ;
     
     if (horizontal < 0.5) { // left
         popFrame.origin.x = MAX(popFrame.origin.x, spac);
@@ -340,21 +338,23 @@
         popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
     if (vertical < 0.3) {
-        popFrame.origin.y = MAX(maxY, spac);
+        popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac);
     } else {
-        popFrame.origin.y = MIN(minY-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
+        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
     }
     return popFrame;
 }
 
 - (CGRect)getArrowFrame {
-    CGRect viewScreenFrame = self.targetViewFrame;
+    CGRect targetFrame = self.targetViewFrame;
+    CGPoint targetCenter = self.targetViewCenter;
+    
     CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
-    arrowFrame.origin.x = viewScreenFrame.origin.x + viewScreenFrame.size.width/2.0 - arrowFrame.size.width/2.0;
-    if (viewScreenFrame.origin.y < RXScreenHeight*0.3) {
-        arrowFrame.origin.y = viewScreenFrame.origin.y + viewScreenFrame.size.height - arrowFrame.size.height;
+    arrowFrame.origin.x = targetFrame.origin.x + targetFrame.size.width/2.0 - arrowFrame.size.width/2.0;
+    if (targetCenter.y < RXScreenHeight*0.3) {
+        arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height - arrowFrame.size.height;
     } else {
-        arrowFrame.origin.y = viewScreenFrame.origin.y  - arrowFrame.size.height;
+        arrowFrame.origin.y = targetFrame.origin.y  - arrowFrame.size.height;
     }
     return arrowFrame;
 }
