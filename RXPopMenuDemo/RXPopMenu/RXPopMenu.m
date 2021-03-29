@@ -16,7 +16,7 @@
 #define RXScreenWidth ([UIScreen mainScreen].bounds.size.width)
 #define RXScreenHeight ([UIScreen mainScreen].bounds.size.height)
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-#define RXArrowSize CGSizeMake(13.0, 6)
+#define RXArrowSize CGSizeMake(14.0, 7)
 
 #define RXSafeTop (RXScreenHeight/RXScreenWidth > 2 ? 44.f : 24.f)
 
@@ -373,7 +373,7 @@
     if (vertical < 0.3) {
         popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac) + RXArrowSize.height;
     } else {
-        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
+        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height+0.5;
     }
     return popFrame;
 }
@@ -389,7 +389,7 @@
     if (vertical < 0.3) {
         arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height;
     } else {
-        arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height;
+        arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height+0.5;
     }
     return arrowFrame;
 }
