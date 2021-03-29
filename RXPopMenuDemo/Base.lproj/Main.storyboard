@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="16g-36-dpE">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="16g-36-dpE">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -14,7 +13,7 @@
             <objects>
                 <navigationController id="16g-36-dpE" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Dsa-yh-pdv">
-                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
                     <connections>
@@ -29,109 +28,139 @@
         <scene sceneID="tne-QT-ifu">
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" sceneMemberID="viewController">
-                    <layoutGuides>
-                        <viewControllerLayoutGuide type="top" id="mJH-HX-RaF"/>
-                        <viewControllerLayoutGuide type="bottom" id="vK0-0v-DxT"/>
-                    </layoutGuides>
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="l0O-KM-u80">
-                                <rect key="frame" x="67" y="211" width="240" height="128"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NIr-TJ-DsS">
+                                <rect key="frame" x="71" y="155" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="xUJ-0Y-WYG">
-                                        <rect key="frame" x="101" y="49" width="38" height="30"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Open"/>
-                                        <connections>
-                                            <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="jP5-Bn-3ad"/>
-                                        </connections>
-                                    </button>
-                                </subviews>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                            </view>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Ins-Q6-yCy">
-                                <rect key="frame" x="168" y="64" width="38" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="Box"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ETH-Ov-jhm"/>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="2Qa-Ml-DaU"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="M13-wS-Nfe">
-                                <rect key="frame" x="67" y="598" width="38" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="plG-A1-LsZ">
+                                <rect key="frame" x="71" y="111" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="List"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1SP-WW-SuV"/>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BXQ-NC-Cno"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="plG-A1-LsZ">
-                                <rect key="frame" x="84" y="110" width="38" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CsU-rK-MMD">
+                                <rect key="frame" x="274" y="155" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="Box"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BjH-bp-7pS"/>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="IFw-6x-dE8"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BO3-vX-kig">
-                                <rect key="frame" x="168" y="425" width="38" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="s8E-Y0-eTO">
+                                <rect key="frame" x="274" y="111" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="List"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Cih-cJ-5Co"/>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="1SK-uQ-Rno"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="v9p-3r-Oqj">
-                                <rect key="frame" x="304" y="568" width="38" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4Da-Ym-j78">
+                                <rect key="frame" x="274" y="320" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="Box"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UAG-P9-wdd"/>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="3eA-R1-BCc"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ugq-ez-ivS">
-                                <rect key="frame" x="168" y="629" width="38" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bXa-5N-kin">
+                                <rect key="frame" x="274" y="276" width="30" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="List"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="tit-ac-HWo"/>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XBx-x2-f5f"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yUc-J1-2XK">
+                                <rect key="frame" x="71" y="320" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Box"/>
+                                <connections>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Zd7-pX-odF"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="TLm-uo-koy">
+                                <rect key="frame" x="71" y="276" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="List"/>
+                                <connections>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="bDu-Gi-UxW"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="apB-gb-8FI">
+                                <rect key="frame" x="71" y="609" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Box"/>
+                                <connections>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Tse-Qh-YTc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cle-UD-52S">
+                                <rect key="frame" x="71" y="565" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="List"/>
+                                <connections>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="NQs-Pc-lPc"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EZi-fj-Ran">
+                                <rect key="frame" x="274" y="609" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Box"/>
+                                <connections>
+                                    <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="083-51-KAg"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="2xM-eL-dk8">
+                                <rect key="frame" x="274" y="565" width="30" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="List"/>
+                                <connections>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="pt5-tE-BLX"/>
                                 </connections>
                             </button>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="OIJ-0t-eqr"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </view>
                     <navigationItem key="navigationItem" id="9Pa-mJ-TzT">
-                        <barButtonItem key="leftBarButtonItem" style="plain" id="BvN-qQ-XBb">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="jEQ-Gp-Iji">
+                        <barButtonItem key="leftBarButtonItem" title="List" style="plain" id="BvN-qQ-XBb">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="jEQ-Gp-Iji">
                                 <rect key="frame" x="16" y="7" width="38" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="Open"/>
+                                <state key="normal" title="List"/>
                                 <connections>
-                                    <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="26g-X7-b8G"/>
+                                    <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="HVM-2w-Dgz"/>
                                 </connections>
                             </button>
                         </barButtonItem>
                         <rightBarButtonItems>
                             <barButtonItem style="plain" id="6am-bt-xEQ">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="6HT-tk-5py">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="6HT-tk-5py">
                                     <rect key="frame" x="321" y="7" width="38" height="30"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" title="Open"/>
+                                    <state key="normal" title="Box"/>
                                     <connections>
-                                        <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dUC-fz-nyF"/>
+                                        <action selector="popBoxAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="j4a-RO-xTt"/>
                                     </connections>
                                 </button>
                             </barButtonItem>
                             <barButtonItem style="plain" id="Tk9-Qn-o3r">
-                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ccL-gj-wpW">
+                                <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="ccL-gj-wpW">
                                     <rect key="frame" x="275" y="7" width="38" height="30"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                    <state key="normal" title="Open"/>
+                                    <state key="normal" title="List"/>
                                     <connections>
-                                        <action selector="openBtnAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="0iC-v4-jOU"/>
+                                        <action selector="popListAction:" destination="BYZ-38-t0r" eventType="touchUpInside" id="CWe-UP-sHT"/>
                                     </connections>
                                 </button>
                             </barButtonItem>
@@ -140,7 +169,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="503" y="-217"/>
+            <point key="canvasLocation" x="501.60000000000002" y="-217.24137931034485"/>
         </scene>
     </scenes>
 </document>

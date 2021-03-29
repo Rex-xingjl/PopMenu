@@ -1,10 +1,10 @@
-//
-//  RXPopMenu.m
-//  RXPopMenuDemo
-//
-//  Created by Rex on 2018/3/7.
-//  Copyright © 2018年 Rex. All rights reserved.
-//
+    //
+    //  RXPopMenu.m
+    //  RXPopMenuDemo
+    //
+    //  Created by Rex on 2018/3/7.
+    //  Copyright © 2018年 Rex. All rights reserved.
+    //
 
 #import "RXPopMenu.h"
 #import "RXPopMenuCell.h"
@@ -16,7 +16,9 @@
 #define RXScreenWidth ([UIScreen mainScreen].bounds.size.width)
 #define RXScreenHeight ([UIScreen mainScreen].bounds.size.height)
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
-#define RXArrowSize CGSizeMake(13.0, 6.5)
+#define RXArrowSize CGSizeMake(13.0, 6)
+
+#define RXSafeTop (RXScreenHeight/RXScreenWidth > 2 ? 44.f : 24.f)
 
 @interface RXPopMenu ()
 <UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource>
@@ -105,7 +107,13 @@
     } else {
         [targetVC.view addSubview:self];
     }
-    UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle: @available(iOS 13.0, *) ? UIImpactFeedbackStyleSoft : UIImpactFeedbackStyleMedium];
+    UIImpactFeedbackStyle style;
+    if (@available(iOS 13.0, *)) {
+        style = UIImpactFeedbackStyleSoft;
+    } else {
+        style = UIImpactFeedbackStyleMedium;
+    }
+    UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
     [generator impactOccurred];
 }
 
@@ -233,7 +241,12 @@
         _popTableView.backgroundColor = [UIColor clearColor];
         _popTableView.layer.cornerRadius = self.cornerRadius;
         _popTableView.layer.masksToBounds = YES;
-    
+        if (@available(iOS 11, *)) {
+            _popTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        } else {
+            
+        }
+        
         [_popTableView registerNib:[UINib nibWithNibName:RXPopMenuCellID bundle:[NSBundle mainBundle]]
             forCellReuseIdentifier:RXPopMenuCellID];
     }
@@ -248,12 +261,17 @@
         layout.minimumInteritemSpacing = 0;
         _popCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height) collectionViewLayout:layout];
         _popCollectionView.contentInset = UIEdgeInsetsMake(10, 10, 10, 10);
-        _popCollectionView.delegate = self;
+        _popCollectionView.delegate = (id)self;
         _popCollectionView.dataSource = self;
         _popCollectionView.bounces = NO;
         _popCollectionView.backgroundColor = self.backColor;;
         _popCollectionView.layer.cornerRadius = self.cornerRadius;
         _popCollectionView.layer.masksToBounds = YES;
+        if (@available(iOS 11, *)) {
+            _popCollectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
+        } else {
+            
+        }
         
         [_popCollectionView registerNib:[UINib nibWithNibName:RXPopBoxCellID bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:RXPopBoxCellID];
     }
@@ -271,7 +289,7 @@
         view.layer.shadowRadius = 10;
         
         _popView = view;
-
+        
         switch (self.menuType) {
             case RXPopMenuList: {
                 [_popView addSubview:self.popTableView];
@@ -290,7 +308,7 @@
 - (RXPopMenuArrow *)popArrow {
     if (!_popArrow) {
         CGRect frame = [self getArrowFrame];
-        self.popArrow = [[RXPopMenuArrow alloc] initWithFrame:frame Color:self.backColor];
+        _popArrow = [[RXPopMenuArrow alloc] initWithFrame:frame Color:self.backColor];
         [self addSubview:_popArrow];
         if (frame.origin.y <= self.targetViewFrame.origin.y) {
             _popArrow.transform = CGAffineTransformRotate(CGAffineTransformIdentity, M_PI);
@@ -302,11 +320,26 @@
 - (CGRect)targetViewFrame {
     CGRect targetFrame;
     if (CGRectEqualToRect(_targetViewFrame, CGRectZero)) {
+        
+        
+        CGRect targetRect = [self.targetView bounds];
         if (self.inNaviBar) {
-            targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
+            targetFrame = [self.targetView convertRect:targetRect toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
         } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
-            targetFrame = [self.targetView convertRect:[self.targetView bounds] toView:window];
+            targetFrame = [self.targetView convertRect:targetRect toView:window];
+            
+            CGFloat y = targetFrame.origin.y;
+            CGFloat h = targetFrame.size.height;
+            
+            CGFloat menuHei = self.menuSize.height + RXSafeTop;
+            if (y < menuHei) {
+                if (RXScreenHeight -y -h < menuHei) {
+                    targetFrame.origin.y = (y+h)/2.0;
+                }
+            } else {
+                targetFrame.size.height = RXScreenHeight -y;
+            }
         }
         _targetViewFrame = targetFrame;
     }
@@ -338,7 +371,7 @@
         popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
     if (vertical < 0.3) {
-        popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac);
+        popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac) + RXArrowSize.height;
     } else {
         popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
     }
@@ -348,13 +381,15 @@
 - (CGRect)getArrowFrame {
     CGRect targetFrame = self.targetViewFrame;
     CGPoint targetCenter = self.targetViewCenter;
+    CGFloat vertical = targetCenter.y / RXScreenHeight ;
     
     CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
     arrowFrame.origin.x = targetFrame.origin.x + targetFrame.size.width/2.0 - arrowFrame.size.width/2.0;
-    if (targetCenter.y < RXScreenHeight*0.3) {
-        arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height - arrowFrame.size.height;
+    
+    if (vertical < 0.3) {
+        arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height;
     } else {
-        arrowFrame.origin.y = targetFrame.origin.y  - arrowFrame.size.height;
+        arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height;
     }
     return arrowFrame;
 }
@@ -456,9 +491,6 @@
     cell.bottomLabel.textAlignment = self.titleAlignment <= 0 ? NSTextAlignmentCenter : self.titleAlignment;
     cell.clipsToBounds = NO;
     cell.topImageView.image = item.image ? [UIImage imageNamed:item.image] : nil;
-//    cell.imageViewWidth.constant = self.hideImage ? 0.f : 22.f;
-//    cell.spaceOfImageAndLabel.constant = self.hideImage ? 0.f : 8.f;
-//    cell.backColor = self.backColor;
     return cell;
 }
 
