@@ -10,4 +10,6 @@ A menu to show selections
 
 4. 增加了仿照微信聊天界面长按菜单的样式。
 
-![PopViewExample](demo_image.jpg "PopViewExample")
+![仿照微信长按样式](box.jpg "PopViewExample")
+
+![更多列表样式](list.jpeg "PopViewExample")
