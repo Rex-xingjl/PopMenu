@@ -1,5 +1,5 @@
 # PopMenu
-A menu to show selections
+仿微信长按菜单 & 更多下拉菜单
 
 
 1. 控件自动根据target 的位置呼出菜单 ### target可以是 1.view（含button之类） 2.BarButtonItem(use customView)
