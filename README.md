@@ -8,8 +8,6 @@
 
 3. 支持全屏幕的任意位置显示，包括naviBar上，视图上和子视图。
 
-4. 增加了仿照微信聊天界面长按菜单的样式。
-
 ![仿照微信长按样式](box.jpg "PopViewExample")
 
 ![更多列表样式](list.jpeg "PopViewExample")
