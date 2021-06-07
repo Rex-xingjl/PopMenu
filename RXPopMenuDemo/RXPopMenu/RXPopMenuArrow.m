@@ -41,5 +41,4 @@
     CGContextFillPath(ctx);
 }
 
-
 @end

@@ -142,7 +142,7 @@
                         maxItem = item;
                     }
                 }
-                CGFloat otherWidth = 60 - (self.hideImage ? 30.f : 0.f);
+                CGFloat otherWidth = 30 + (self.hideImage ? 0.f : 30.f);
                 CGFloat maxTextWidth = [maxItem.title sizeWithAttributes:@{NSFontAttributeName:self.titleFont}].width;
                 CGFloat itemWidth = maxTextWidth + 1 + otherWidth;
                 itemWidth = itemWidth <= MINWIDTH ? MINWIDTH : itemWidth;
@@ -320,15 +320,13 @@
 - (CGRect)targetViewFrame {
     CGRect targetFrame;
     if (CGRectEqualToRect(_targetViewFrame, CGRectZero)) {
-        
-        
         CGRect targetRect = [self.targetView bounds];
         if (self.inNaviBar) {
             targetFrame = [self.targetView convertRect:targetRect toView:[RXPopMenu VCForShowView:self.targetView].navigationController.view];;
         } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
             targetFrame = [self.targetView convertRect:targetRect toView:window];
-            
+
             CGFloat y = targetFrame.origin.y;
             CGFloat h = targetFrame.size.height;
             
@@ -341,6 +339,7 @@
                 targetFrame.size.height = RXScreenHeight -y;
             }
         }
+        targetFrame.origin.y = ceil(targetFrame.origin.y);
         _targetViewFrame = targetFrame;
     }
     return _targetViewFrame;
@@ -373,7 +372,7 @@
     if (vertical < 0.3) {
         popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac) + RXArrowSize.height;
     } else {
-        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height+0.5;
+        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
     }
     return popFrame;
 }
@@ -389,7 +388,7 @@
     if (vertical < 0.3) {
         arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height;
     } else {
-        arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height+0.5;
+        arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height;
     }
     return arrowFrame;
 }
