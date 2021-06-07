@@ -1,6 +1,9 @@
 # PopMenu
-仿微信长按菜单 & 更多下拉菜单
 
+本控件集成了 仿微信IM“聊天长按菜单” 以及 “更多功能下拉菜单” 两种样式。
+之所以放在同一个控件中，是因为计算位置的代码一致，只有计算frame的代码不同。
+希望它能够帮助到你实现功能。
+简书 https://www.jianshu.com/p/e2ec10ee3e9d
 
 1. 控件自动根据target 的位置呼出菜单。 target可以是 1.view（含button之类） 2.BarButtonItem(use customView)
 
