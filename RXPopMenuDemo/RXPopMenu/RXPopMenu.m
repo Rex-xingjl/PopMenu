@@ -326,7 +326,11 @@
         } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
             targetFrame = [self.targetView convertRect:targetRect toView:window];
-
+            if (targetFrame.size.height+targetFrame.origin.y > RXScreenHeight) {
+                targetFrame.origin.y = MAX(0, targetFrame.origin.y);
+                targetFrame.size.height = MIN(targetFrame.origin.y+targetFrame.size.height, RXScreenHeight);
+            }
+            
             CGFloat y = targetFrame.origin.y;
             CGFloat h = targetFrame.size.height;
             
