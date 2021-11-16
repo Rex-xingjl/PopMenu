@@ -32,6 +32,7 @@
 @property (nonatomic, strong) id targetView;
 @property (nonatomic, assign) BOOL inNaviBar;
 
+@property (nonatomic, assign) CGFloat visibleHeight;
 @property (nonatomic, assign) CGRect targetViewFrame;
 
 /** 元素集合 */
@@ -91,7 +92,8 @@
     }
 }
 
-- (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items {
+- (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items keyboardHeight:(CGFloat)keyboardHeight {
+    self.visibleHeight = RXScreenHeight - keyboardHeight;
     self.targetView = target;
     if (![target isKindOfClass:[UIView class]] &&
         ![target isKindOfClass:[UIBarButtonItem class]]) {
@@ -115,6 +117,10 @@
     }
     UIImpactFeedbackGenerator * generator = [[UIImpactFeedbackGenerator alloc] initWithStyle:style];
     [generator impactOccurred];
+}
+
+- (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items {
+    [self showBy:target withItems:items keyboardHeight:0];
 }
 
 - (void)setItems:(NSArray<RXPopMenuItem *> *)items {
@@ -243,8 +249,6 @@
         _popTableView.layer.masksToBounds = YES;
         if (@available(iOS 11, *)) {
             _popTableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        } else {
-            
         }
         
         [_popTableView registerNib:[UINib nibWithNibName:RXPopMenuCellID bundle:[NSBundle mainBundle]]
@@ -326,21 +330,20 @@
         } else {
             UIWindow * window = [[[UIApplication sharedApplication] delegate] window];
             targetFrame = [self.targetView convertRect:targetRect toView:window];
-            if (targetFrame.size.height+targetFrame.origin.y > RXScreenHeight) {
-                targetFrame.origin.y = MAX(0, targetFrame.origin.y);
-                targetFrame.size.height = MIN(targetFrame.origin.y+targetFrame.size.height, RXScreenHeight);
+            
+            if (targetFrame.origin.y < 0) {
+                targetFrame.size.height = MIN(self.visibleHeight, targetFrame.size.height + targetFrame.origin.y);
+                targetFrame.origin.y = 0;
+            } else {
+                targetFrame.size.height = MIN(self.visibleHeight - targetFrame.origin.y, targetFrame.size.height);
             }
-            
-            CGFloat y = targetFrame.origin.y;
-            CGFloat h = targetFrame.size.height;
-            
             CGFloat menuHei = self.menuSize.height + RXSafeTop;
-            if (y < menuHei) {
-                if (RXScreenHeight -y -h < menuHei) {
-                    targetFrame.origin.y = (y+h)/2.0;
+            if (targetFrame.origin.y < menuHei) {
+                if (self.visibleHeight - targetFrame.origin.y - targetFrame.size.height < menuHei) {
+                    targetFrame.origin.y = (targetFrame.origin.y + targetFrame.size.height)/2.0;
                 }
             } else {
-                targetFrame.size.height = RXScreenHeight -y;
+                targetFrame.size.height = self.visibleHeight - targetFrame.origin.y;
             }
         }
         targetFrame.origin.y = ceil(targetFrame.origin.y);
@@ -366,34 +369,37 @@
     
     CGRect popFrame = CGRectMake(targetCenter.x-menuWidth/2.0, 0, menuWidth, menuHeight);
     CGFloat horizontal = targetCenter.x / RXScreenWidth;
-    CGFloat vertical = targetCenter.y / RXScreenHeight ;
+    CGFloat vertical = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTop;
     
     if (horizontal < 0.5) { // left
         popFrame.origin.x = MAX(popFrame.origin.x, spac);
     } else {
         popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
-    if (vertical < 0.3) {
+    if (vertical) {
         popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac) + RXArrowSize.height;
     } else {
-        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame)-menuHeight, RXScreenHeight-spac) - RXArrowSize.height;
+        popFrame.origin.y = MIN(CGRectGetMinY(targetFrame) - menuHeight, self.visibleHeight-spac) - RXArrowSize.height;
     }
+    popFrame.origin.y = ceil(popFrame.origin.y);
     return popFrame;
 }
 
 - (CGRect)getArrowFrame {
     CGRect targetFrame = self.targetViewFrame;
-    CGPoint targetCenter = self.targetViewCenter;
-    CGFloat vertical = targetCenter.y / RXScreenHeight ;
+    
+    CGFloat menuHeight = self.menuSize.height;
+    CGFloat vertical = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTop;
     
     CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
     arrowFrame.origin.x = targetFrame.origin.x + targetFrame.size.width/2.0 - arrowFrame.size.width/2.0;
     
-    if (vertical < 0.3) {
+    if (vertical) {
         arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height;
     } else {
         arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height;
     }
+    arrowFrame.origin.y = ceil(arrowFrame.origin.y);
     return arrowFrame;
 }
 
@@ -584,3 +590,4 @@
 }
 
 @end
+

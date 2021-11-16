@@ -55,6 +55,12 @@ typedef enum : NSUInteger {
  */
 - (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items;
 
+/**
+ *  如果这时候键盘处于弹起状态 可以将键盘高度传入 避免菜单被键盘遮挡
+ *  键盘高度可以用项目中的一个全局单例监听KeyboardNotification来记录
+ */
+- (void)showBy:(id)target withItems:(NSArray <RXPopMenuItem *>*)items keyboardHeight:(CGFloat)keyboardHeight;
+
 /** 点击事件
  * 可以用 item.index 或者 item.title 区分响应操作
  */
