@@ -59,7 +59,7 @@
 		4470C2ED204F828700AA0C79 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CDCEF41F25ED00F500986E00 /* RXPopMenuCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RXPopMenuCell.xib; sourceTree = "<group>"; };
 		CDCEF42025ED00F500986E00 /* RXPopBoxCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopBoxCell.h; sourceTree = "<group>"; };
-		CDCEF42125ED00F500986E00 /* RXPopMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenu.m; sourceTree = "<group>"; };
+		CDCEF42125ED00F500986E00 /* RXPopMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenu.m; sourceTree = "<group>"; usesTabs = 0; };
 		CDCEF42225ED00F500986E00 /* RXPopMenuCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RXPopMenuCell.m; sourceTree = "<group>"; };
 		CDCEF42325ED00F500986E00 /* RXPopBoxCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RXPopBoxCell.xib; sourceTree = "<group>"; };
 		CDCEF42425ED00F500986E00 /* RXPopMenuCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RXPopMenuCell.h; sourceTree = "<group>"; };
@@ -103,7 +103,9 @@
 				4470C2EA204F828700AA0C79 /* RXPopMenuDemoUITests */,
 				4470C2C5204F828700AA0C79 /* Products */,
 			);
+			indentWidth = 0;
 			sourceTree = "<group>";
+			usesTabs = 0;
 		};
 		4470C2C5204F828700AA0C79 /* Products */ = {
 			isa = PBXGroup;

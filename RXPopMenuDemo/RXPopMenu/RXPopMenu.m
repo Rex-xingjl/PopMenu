@@ -1,27 +1,31 @@
-    //
-    //  RXPopMenu.m
-    //  RXPopMenuDemo
-    //
-    //  Created by Rex on 2018/3/7.
-    //  Copyright © 2018年 Rex. All rights reserved.
-    //
+//
+//  RXPopMenu.m
+//  RXPopMenuDemo
+//
+//  Created by Rex on 2018/3/7.
+//  Copyright © 2018年 Rex. All rights reserved.
+//
 
 #import "RXPopMenu.h"
 #import "RXPopMenuCell.h"
 #import "RXPopMenuArrow.h"
 #import "RXPopBoxCell.h"
 
-#define RXPopMenuCellID @"RXPopMenuCell"
-#define RXPopBoxCellID @"RXPopBoxCell"
+static NSString * const RXPopMenuCellID = @"RXPopMenuCell";
+static NSString * const RXPopBoxCellID = @"RXPopBoxCell";
+static CGFloat const RXPopBoxItemWidth = 60.f;
+
+#define RXSafeTopHeight (RXScreenHeight/RXScreenWidth > 2 ? 44.f : 24.f)
 #define RXScreenWidth ([UIScreen mainScreen].bounds.size.width)
 #define RXScreenHeight ([UIScreen mainScreen].bounds.size.height)
 #define RXHexRGB(rgbValue) [UIColor colorWithRed:((float)((rgbValue & 0xFF0000) >> 16))/255.0 green:((float)((rgbValue & 0xFF00) >> 8))/255.0 blue:((float)(rgbValue & 0xFF))/255.0 alpha:1.0]
 #define RXArrowSize CGSizeMake(14.0, 7)
 
-#define RXSafeTop (RXScreenHeight/RXScreenWidth > 2 ? 44.f : 24.f)
-
-@interface RXPopMenu ()
-<UITableViewDelegate, UITableViewDataSource, UICollectionViewDataSource>
+@interface RXPopMenu () <
+UITableViewDelegate,
+UITableViewDataSource,
+UICollectionViewDataSource
+>
 
 @property (nonatomic, assign) RXPopMenuType menuType;
 
@@ -157,8 +161,8 @@
                 
             case RXPopMenuBox: {
                 NSInteger line = _items.count/5 + (_items.count%5>0);
-                CGFloat width = MIN(_items.count, 5)*60 + 20;
-                CGFloat height = line*54 + (line-1)*10 + 20;
+                CGFloat width = MIN(_items.count, 5)*RXPopBoxItemWidth + 20;
+                CGFloat height = line*self.itemHeight + (line-1)*10 + 20;
                 _menuSize = CGSizeMake(width, height);
             } break;
             default:  break;
@@ -184,7 +188,8 @@
 }
 
 - (CGFloat)itemHeight {
-    return _itemHeight <= 0 ? 50.f : _itemHeight;
+    CGFloat height = self.menuType == RXPopMenuList ? 50.f : 54.f;
+    return _itemHeight <= 0 ? height : _itemHeight;
 }
 
 - (void)setItemHeight:(CGFloat)itemHeight {
@@ -200,9 +205,7 @@
 }
 
 - (void)setBackColor:(UIColor *)backColor {
-    if (_backColor != backColor) {
-        _backColor = backColor;
-    }
+    _backColor = backColor;
 }
 
 - (CGFloat)cornerRadius {
@@ -214,10 +217,8 @@
 }
 
 - (void)setTitleFont:(UIFont *)titleFont {
-    if (_titleFont != titleFont) {
-        _titleFont = titleFont;
-        [_popTableView reloadData];
-    }
+    _titleFont = titleFont;
+    [_popTableView reloadData];
 }
 
 - (UIColor *)titleColor {
@@ -225,16 +226,16 @@
 }
 
 - (void)setTitleColor:(UIColor *)titleColor {
-    if (_titleColor != titleColor) {
-        _titleColor = titleColor;
-        [_popTableView reloadData];
-        [_popCollectionView reloadData];
-    }
+    _titleColor = titleColor;
+    [_popTableView reloadData];
+    [_popCollectionView reloadData];
 }
 
 - (UIColor *)lineColor {
     return _lineColor ? : [UIColor whiteColor];
 }
+
+#pragma mark - Lazy Load
 
 - (UITableView *)popTableView {
     if (!_popTableView) {
@@ -260,7 +261,7 @@
 - (UICollectionView *)popCollectionView {
     if (!_popCollectionView) {
         UICollectionViewFlowLayout * layout = [[UICollectionViewFlowLayout alloc] init];
-        layout.itemSize = CGSizeMake(60, 54);
+        layout.itemSize = CGSizeMake(RXPopBoxItemWidth, self.itemHeight);
         layout.minimumLineSpacing = 10;
         layout.minimumInteritemSpacing = 0;
         _popCollectionView = [[UICollectionView alloc] initWithFrame:CGRectMake(0, 0, self.menuSize.width, self.menuSize.height) collectionViewLayout:layout];
@@ -273,8 +274,6 @@
         _popCollectionView.layer.masksToBounds = YES;
         if (@available(iOS 11, *)) {
             _popCollectionView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
-        } else {
-            
         }
         
         [_popCollectionView registerNib:[UINib nibWithNibName:RXPopBoxCellID bundle:[NSBundle mainBundle]] forCellWithReuseIdentifier:RXPopBoxCellID];
@@ -291,7 +290,6 @@
         view.layer.shadowOffset = CGSizeMake(0, 4);
         view.layer.shadowOpacity = 1;
         view.layer.shadowRadius = 10;
-        
         _popView = view;
         
         switch (self.menuType) {
@@ -301,8 +299,7 @@
             case RXPopMenuBox: {
                 [_popView addSubview:self.popCollectionView];
             } break;
-            default:
-                break;
+            default: break;
         }
         [self addSubview:_popView];
     }
@@ -321,6 +318,8 @@
     return _popArrow;
 }
 
+#pragma mark - Calculate Frame
+
 - (CGRect)targetViewFrame {
     CGRect targetFrame;
     if (CGRectEqualToRect(_targetViewFrame, CGRectZero)) {
@@ -337,7 +336,7 @@
             } else {
                 targetFrame.size.height = MIN(self.visibleHeight - targetFrame.origin.y, targetFrame.size.height);
             }
-            CGFloat menuHei = self.menuSize.height + RXSafeTop;
+            CGFloat menuHei = self.menuSize.height + RXSafeTopHeight;
             if (targetFrame.origin.y < menuHei) {
                 if (self.visibleHeight - targetFrame.origin.y - targetFrame.size.height < menuHei) {
                     targetFrame.origin.y = (targetFrame.origin.y + targetFrame.size.height)/2.0;
@@ -368,15 +367,15 @@
     CGFloat spac = 10.f;
     
     CGRect popFrame = CGRectMake(targetCenter.x-menuWidth/2.0, 0, menuWidth, menuHeight);
-    CGFloat horizontal = targetCenter.x / RXScreenWidth;
-    CGFloat vertical = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTop;
+    BOOL left = targetCenter.x / RXScreenWidth < 0.5;
+    BOOL top = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTopHeight;
     
-    if (horizontal < 0.5) { // left
+    if (left) { // 左右边距控制
         popFrame.origin.x = MAX(popFrame.origin.x, spac);
     } else {
         popFrame.origin.x = MIN(popFrame.origin.x, RXScreenWidth-spac-menuWidth);
     }
-    if (vertical) {
+    if (top) {  // 上下间距控制
         popFrame.origin.y = MAX(CGRectGetMaxY(targetFrame), spac) + RXArrowSize.height;
     } else {
         popFrame.origin.y = MIN(CGRectGetMinY(targetFrame) - menuHeight, self.visibleHeight-spac) - RXArrowSize.height;
@@ -389,12 +388,12 @@
     CGRect targetFrame = self.targetViewFrame;
     
     CGFloat menuHeight = self.menuSize.height;
-    CGFloat vertical = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTop;
+    BOOL top = CGRectGetMinY(targetFrame) < menuHeight + RXSafeTopHeight;
     
     CGRect arrowFrame = CGRectMake(0, 0, RXArrowSize.width, RXArrowSize.height);
     arrowFrame.origin.x = targetFrame.origin.x + targetFrame.size.width/2.0 - arrowFrame.size.width/2.0;
     
-    if (vertical) {
+    if (top) {
         arrowFrame.origin.y = targetFrame.origin.y + targetFrame.size.height;
     } else {
         arrowFrame.origin.y = targetFrame.origin.y - RXArrowSize.height;
@@ -418,7 +417,6 @@
 }
 
 + (UIViewController *)VCForShowView:(id)view {
-    
     if ([view isKindOfClass:[UIView class]]) {
         for (UIView * next = [view superview]; next; next = next.superview) {
             UIResponder* nextResponder = [next nextResponder];
@@ -447,7 +445,7 @@
     return nil;
 }
 
-#pragma mark - UITableView Delegate -
+#pragma mark - UITableView Delegate
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.items.count;
@@ -484,7 +482,7 @@
     }
 }
 
-#pragma mark - UICollectionView Delegate -
+#pragma mark - UICollectionView Delegate
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return self.items.count;
